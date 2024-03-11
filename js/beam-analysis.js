@@ -102,45 +102,43 @@ BeamAnalysis.analyzer = {};
  * @param {Number}  load    The applied load
  */
 BeamAnalysis.analyzer.simplySupported = function (beam, load) {
-  this.beam = beam;
-  this.load = load;
+    this.beam = beam;
+    this.load = load;
 };
 
 BeamAnalysis.analyzer.simplySupported.prototype = {
   getDeflectionEquation: function (beam, load) {
-    var E = beam.material.properties.E;
-    var I = beam.material.properties.I;
-
+    var EI = beam.material.properties.EI;
     var W = load;
     var L = beam.primarySpan;
     return function (x) {
-        if(x >= 0 && x <= L){
-            var deflection = -W * x * x / (24 * E * I);
+        if (x >= 0 && x <= L) {
+            var deflection = -W * x * x / (24 * EI);
             return {
                 x: x,
                 y: deflection
-              };
-        }else{
-            return null
+            };
+        } else {
+            return null;
         }
-      
     };
   },
 
   getBendingMomentEquation: function (beam, load) {
+    var EI = beam.material.properties.EI;
     var W = load;
     var L = beam.primarySpan;
+
     return function (x) {
         if (x >= 0 && x <= L){
-            var bendingMoment = -2 * W * x * (L - x);
+            var bendingMoment = -2 * W * x * (L - x) / (2 * EI);
             return {
                 x: x,
                 y: bendingMoment
               };
-        }else{
+        } else {
             return null;
         }
-      
     };
   },
 
@@ -174,14 +172,13 @@ BeamAnalysis.analyzer.twoSpanUnequal = function (beam, load) {
 
 BeamAnalysis.analyzer.twoSpanUnequal.prototype = {
   getDeflectionEquation: function (beam, load) {
-    var E = beam.material.properties.E;
-    var I = beam.material.properties.I;
+    var EI = beam.material.properties.EI;
     var L1 = beam.primarySpan;
     var L2 = beam.secondarySpan;
 
     return function (x) {
-        if(x >= 0 && x <= L1){
-            var deflection = -load * x * x / (24 *E * I);
+        if (x >= 0 && x <= L1){
+            var deflection = -load * x * x / (24 * EI);
             return {
                 x: x,
                 y: deflection
